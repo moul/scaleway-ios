@@ -9,6 +9,8 @@ var {
     StatusBarIOS,
 } = React;
 
+var scaleway = require('scaleway/lib/client');
+
 export default class ServerListView extends Component {
     constructor(props) {
         super(props);
@@ -18,25 +20,38 @@ export default class ServerListView extends Component {
         });
 
         this.state = {
-          dataSource: ds.cloneWithRows(this.dummyServers()),
+          dataSource: ds,
           loaded: false,
         };
     }
 
-    renderServerItem(rowData) {
-        return(
-            <View style={styles.serverItem}>
-                <Text>{rowData}</Text>
-            </View>
-        );
+    componentDidMount() {
+        var client = new scaleway();
+
+        client.setConfig({
+            api_endpoint: "https://api.scaleway.com/",
+            dry_run: false,
+            organization: "XXX",
+            token: "XXX"
+         });
+
+        client.get('/servers', (err, res) => {
+
+            let ds = this.state.dataSource;
+
+            this.setState({
+                dataSource: ds.cloneWithRows(res.body.servers),
+                loaded: true,
+            })
+        });
     }
 
-    dummyServers(pressData) {
-        var dataBlob = [];
-        for (var i = 0; i < 100; i++) {
-            dataBlob.push('Server ' + i);
-        }
-        return dataBlob;
+    renderServerItem(server) {
+        return(
+            <View style={styles.serverItem}>
+                <Text>{server.name} - {server.state_detail}</Text>
+            </View>
+        );
     }
 
     render() {
