@@ -8,6 +8,7 @@ var React = require('react-native');
 var {
   AppRegistry,
   StyleSheet,
+  NavigatorIOS,
   Text,
   View,
   TabBarIOS,
@@ -48,7 +49,15 @@ class ScalewayIOS extends React.Component {
                     icon={{uri: "servers", isStatic: true}}
                     onPress={ () => this.changeTab('servers') }
                     selected={ this.state.selectedTab === 'servers' }>
-                    <ServerListView />
+
+                    <NavigatorIOS
+                        style={{flex: 1}}
+                        initialRoute={{
+                          title: 'My Servers',
+                          component: ServerListView,
+                        }}
+                     />
+
                 </TabBarIOS.Item>
 
                 <TabBarIOS.Item
@@ -73,12 +82,6 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
 });
 
