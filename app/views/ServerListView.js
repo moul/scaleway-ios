@@ -3,11 +3,16 @@ var React = require("react-native");
 var {
     Component,
     StyleSheet,
-    ListView,
+    NavigatorIOS,
+    StatusBarIOS,
     View,
     Text,
-    StatusBarIOS,
+    ListView,
+    TouchableHighlight,
 } = React;
+
+import StatusIcon from "../components/StatusIcon";
+import ServerView from "./ServerView"
 
 var scaleway = require('scaleway/lib/client');
 
@@ -46,11 +51,29 @@ export default class ServerListView extends Component {
         });
     }
 
+    _pressRow(server) {
+       this.props.navigator.push({
+        title: server.name,
+        component: ServerView,
+        passProps: {server: server}
+      });
+    }
+
     renderServerItem(server) {
         return(
-            <View style={styles.serverItem}>
-                <Text>{server.name} - {server.state_detail}</Text>
-            </View>
+            <TouchableHighlight onPress={() => this._pressRow(server)}>
+                <View style={styles.serverItem}>
+                    <StatusIcon style={{alignSelf: "center"}} />
+                    <View style={{alignSelf: "center", paddingLeft: 10, flex:2}}>
+                        <Text style={{fontWeight: "bold"}}>{server.name}</Text>
+                        <Text>{server.image.name}</Text>
+                    </View>
+                    <View style={{alignSelf: "center", paddingLeft: 10}}>
+                        <Text style={{fontWeight: "bold", textAlign:'right'}}>512MB</Text>
+                        <Text>192.168.1.2</Text>
+                    </View>
+                </View>
+            </TouchableHighlight>
         );
     }
 
@@ -74,11 +97,16 @@ var styles = StyleSheet.create({
     alignItems: 'center',
   },
   listView: {
-    paddingTop: 20,
+    flex: 1,
   },
   serverItem: {
     flex: 1,
+    height: 80,
+    paddingHorizontal: 10,
+    backgroundColor: '#ff0',
     flexDirection: 'row',
-    height: 40,
-  }
+    justifyContent: 'space-between',
+    borderBottomColor: '#eee',
+    borderBottomWidth: 0.5,
+  },
 });
